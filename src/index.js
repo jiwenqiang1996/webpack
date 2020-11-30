@@ -1,13 +1,13 @@
 import $ from 'jquery';
-console.log(window.$)
+console.log($)
 // expose-loader 暴露全局的loader
-// let str = require('./a.js')
+let str = require('./a.js')
 
-// const fn = () => {
-//     console.log(str);
-// }
+const fn = () => {
+    console.log(str);
+}
 
-// fn();
+fn();
 
 // @log
 // class A {
@@ -17,6 +17,6 @@ console.log(window.$)
 // const b = new A();
 // console.log(b.a);
 
-// require('./index.css');
+require('./index.css');
 
-// require('./index.less');
+require('./index.less');

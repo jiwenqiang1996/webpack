@@ -24,6 +24,10 @@ module.exports = {
     output: {
         filename: 'bundle.js', // 打包后的文件名
         path: path.resolve(__dirname,'dist'), // 路径必须是一个绝对路径
+        // publicPath: 'http://' //配置公共地址
+    },
+    externals: { // 配置不需要打包的第三方库，例如cdn引用
+        jquery:'$'
     },
     module: {
         rules: [ //规则 右->左  下->上  
@@ -76,6 +80,26 @@ module.exports = {
                     'postcss-loader',
                     'less-loader' 
                 ]
+            },
+            { 
+                test:/\.(jpg|png|gif)$/,
+                // 图片大小限制，低于限制转化成base64
+                use: [                  
+                    {
+                        loader:'url-loader',
+                        options:{
+                            limit: 100*1024,
+                            outputPath: '/img/',
+                            // publicPath: 'http://' //配置公共地址  例如cdn地址
+                        } 
+                    }
+                ]
+            },
+            {  
+                test:/\.html$/,
+                use: [                  
+                    'html-withimg-loader' 
+                ]
             }
         ]
     },
@@ -85,10 +109,10 @@ module.exports = {
             filename: 'index.html'            
         }),
         new MiniCssExtractPlugin({
-            filename: 'main.css'
+            filename: 'css/main.css'
         }),
-        new webpack.ProvidePlugin({
-            $: 'jquery'
-        })
+        // new webpack.ProvidePlugin({ // 每个模块注入jQuery
+        //     $: 'jquery'
+        // })
     ]
 }

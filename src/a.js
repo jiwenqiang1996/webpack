@@ -1,4 +1,4 @@
-module.exports = 'hello webpack'; 
+export default  'hello webpack'; 
 require('@babel/polyfill');
 
 class B {
