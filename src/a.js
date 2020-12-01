@@ -10,4 +10,4 @@ function * gen(params) {
 }
 console.log(gen().next());
 
-'aaa'.includes('a');
+'aaa'.includes('aa');
