@@ -2,14 +2,7 @@ let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 // let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // let OptimizeCssAssetsWebpackPlugin  = require('optimize-css-assets-webpack-plugin');
-
-
-// 1)cleanWebpackPlugin
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
-// 2)copyWebpackPlugin
-const copyWpackPlugin = require('copy-webpack-plugin')
-// 3)bannerPlugin 内置的插件
-let webpack = require('webpack');
+// let webpack = require('webpack');
 
 module.exports = {
     devServer: { // 开发服务器的配置
@@ -39,7 +32,14 @@ module.exports = {
     externals: { // 配置不需要打包的第三方库，例如cdn引用
         jquery:'$'
     },
-  
+    // 1)大而全  单独文件 显示行列
+    // devtool:'source-map',// 增加映射文件，方便调试
+    // 2)没有单独文件 显示行列
+    // devtool:'eval-source-map',// 增加映射文件，方便调试
+    // 3)有单独文件 不显示行列
+    // devtool:'cheap-module-source-map',
+    // 4)不产生文件，集成在打包文件中，不显示行列
+    devtool:'cheap-module-eval-source-map',
     module: {
         rules: [ //规则 右->左  下->上  
             // {
@@ -117,7 +117,7 @@ module.exports = {
     plugins:[
         new HtmlWebpackPlugin({
             template: './index.html',
-            filename: 'home.html'     
+            filename: 'index.html'     
         }),      
         // new MiniCssExtractPlugin({
         //     filename: 'css/main.css'
@@ -125,10 +125,5 @@ module.exports = {
         // new webpack.ProvidePlugin({ // 每个模块注入jQuery
         //     $: 'jquery'
         // })
-        new CleanWebpackPlugin(),
-        new copyWpackPlugin([
-            {from:'doc',to:'./'}
-        ]),
-        new webpack.BannerPlugin('made by jiwq')
     ]
 }

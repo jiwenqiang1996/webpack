@@ -2,14 +2,7 @@ let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 // let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // let OptimizeCssAssetsWebpackPlugin  = require('optimize-css-assets-webpack-plugin');
-
-
-// 1)cleanWebpackPlugin
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
-// 2)copyWebpackPlugin
-const copyWpackPlugin = require('copy-webpack-plugin')
-// 3)bannerPlugin 内置的插件
-let webpack = require('webpack');
+// let webpack = require('webpack');
 
 module.exports = {
     devServer: { // 开发服务器的配置
@@ -25,11 +18,12 @@ module.exports = {
     //         new OptimizeCssAssetsWebpackPlugin()
     //     ]
     // },
-    // mode: 'development', // 模式 生产 production 开发 development
-    mode: 'production',
+    mode: 'development', // 模式 生产 production 开发 development
+    // mode: 'production',
     // 多入口
     entry: {
-        home:'./src/index.js'
+        home:'./src/index.js',
+        other: './src/other.js'
     }, 
     output: {
         filename: '[name].js', // 打包后的文件名
@@ -39,7 +33,6 @@ module.exports = {
     externals: { // 配置不需要打包的第三方库，例如cdn引用
         jquery:'$'
     },
-  
     module: {
         rules: [ //规则 右->左  下->上  
             // {
@@ -55,11 +48,11 @@ module.exports = {
                             presets: [
                                 '@babel/preset-env'
                             ],
-                            // plugins: [
-                            //     ["@babel/plugin-proposal-decorators",{"legacy": true}],
-                            //     ['@babel/plugin-proposal-class-properties',{"loose": true}],
-                            //     "@babel/plugin-transform-runtime"
-                            // ]
+                            plugins: [
+                                ["@babel/plugin-proposal-decorators",{"legacy": true}],
+                                ['@babel/plugin-proposal-class-properties',{"loose": true}],
+                                "@babel/plugin-transform-runtime"
+                            ]
                         }
                     }
                 ],
@@ -117,18 +110,19 @@ module.exports = {
     plugins:[
         new HtmlWebpackPlugin({
             template: './index.html',
-            filename: 'home.html'     
-        }),      
+            filename: 'home.html',
+            chunks: ['home']            
+        }),
+        new HtmlWebpackPlugin({
+            template: './index.html',
+            filename: 'other.html',
+            chunks: ['other']             
+        }),
         // new MiniCssExtractPlugin({
         //     filename: 'css/main.css'
         // }),
         // new webpack.ProvidePlugin({ // 每个模块注入jQuery
         //     $: 'jquery'
         // })
-        new CleanWebpackPlugin(),
-        new copyWpackPlugin([
-            {from:'doc',to:'./'}
-        ]),
-        new webpack.BannerPlugin('made by jiwq')
     ]
 }
