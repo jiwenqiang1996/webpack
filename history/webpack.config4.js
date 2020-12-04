@@ -4,10 +4,33 @@ const  webpack  = require('webpack');
 // let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // let OptimizeCssAssetsWebpackPlugin  = require('optimize-css-assets-webpack-plugin');
 
-module.exports = {    
+module.exports = {
+    devServer: { // 开发服务器的配置
+        // port: 3000,
+        // contentBase: './dist'
+        progress: true,
+        // 1
+        // proxy: {
+        //     '/api':{
+        //         target:'http://localhost:3000',
+        //         pathRewrite:{'/api':''}
+        //     }
+        // }
+        // 2 模拟数据
+        // before(app){
+        //     app.get('/user',(req,res)=>{
+        //         res.json({name:'wahaha-before'})
+        //     })
+        // }
+        // 3 node服务中启用webpack 见server.js
+        
+    },
     performance: { // 解决limit
         hints: false
-    },      
+    },
+    
+    // mode: 'development', // 模式 生产 production 开发 development
+    mode: 'production',
     // 多入口
     entry: {
         home:'./src/index.js'

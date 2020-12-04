@@ -1,13 +1,32 @@
 let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
-const  webpack  = require('webpack');
 // let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // let OptimizeCssAssetsWebpackPlugin  = require('optimize-css-assets-webpack-plugin');
 
-module.exports = {    
+
+// 1)cleanWebpackPlugin
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+// 2)copyWebpackPlugin
+const copyWpackPlugin = require('copy-webpack-plugin')
+// 3)bannerPlugin 内置的插件
+let webpack = require('webpack');
+
+module.exports = {
+    devServer: { // 开发服务器的配置
+        port: 3000,
+        progress: true,
+        // contentBase: './dist'
+    },
     performance: { // 解决limit
         hints: false
-    },      
+    },
+    // optimization: { // 优化项
+    //     minimizer: [
+    //         new OptimizeCssAssetsWebpackPlugin()
+    //     ]
+    // },
+    // mode: 'development', // 模式 生产 production 开发 development
+    mode: 'production',
     // 多入口
     entry: {
         home:'./src/index.js'
@@ -20,25 +39,13 @@ module.exports = {
     externals: { // 配置不需要打包的第三方库，例如cdn引用
         jquery:'$'
     },
-    resolve:{ // 解析第三方包
-        // modules: [path.relative('node_modules')],
-        // extensions: ['.js','.css','.json'], // 拓展名
-        //mainFields: [], //入口文件名 
-        //mainFields: ['style','main], // 默认入口为main
-        //alias: { //别名
-        //  bootstrap: 'bootstrap/dist/css/bootstrap.css'
-        //}
-    },  
+  
     module: {
-        rules: [ //规则 右->左  下->上 
-            {  //css-loader
-                test:/\.css$/,
-                use: [
-                    // MiniCssExtractPlugin.loader,                    
-                    'css-loader',
-                    'postcss-loader' 
-                ]
-            },       
+        rules: [ //规则 右->左  下->上  
+            // {
+            //     test: require.resolve('jquery'),
+            //     use: 'expose-loader?$'
+            // },          
             {
                 test: /\.js$/,
                 use: [
@@ -58,7 +65,33 @@ module.exports = {
                 ],
                 include: path.resolve(__dirname,'src'),
                 exclude: /node_modules/
-            },            
+            },
+            // {
+            //     test: /\.js$/,
+            //     enforce: "pre",
+            //     use: [
+            //         {
+            //             loader: 'eslint-loader',
+            //         }
+            //     ]
+            // },
+            // {  //css-loader
+            //     test:/\.css$/,
+            //     use: [
+            //         MiniCssExtractPlugin.loader,                    
+            //         'css-loader',
+            //         'postcss-loader' 
+            //     ]
+            // },
+            // {  //css-loader
+            //     test:/\.less$/,
+            //     use: [
+            //         MiniCssExtractPlugin.loader,
+            //         'css-loader',
+            //         'postcss-loader',
+            //         'less-loader' 
+            //     ]
+            // },
             { 
                 test:/\.(jpg|png|gif)$/,
                 // 图片大小限制，低于限制转化成base64
@@ -85,17 +118,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './index.html',
             filename: 'index.html'     
-        }),   
-    //     new webpack.DefinePlugin({
-    //         DEV: JSON.stringify('dev')
-    //     })
-    new webpack.DefinePlugin({
-        DEV: JSON.stringify('dev1'),
-        PRODUCTION: JSON.stringify(true),
-        VERSION: JSON.stringify("5fa3b9"),
-        BROWSER_SUPPORTS_HTML5: true,
-        TWO: "1+1",
-        "typeof window": JSON.stringify("object")
-      })
+        }),      
+        // new MiniCssExtractPlugin({
+        //     filename: 'css/main.css'
+        // }),
+        // new webpack.ProvidePlugin({ // 每个模块注入jQuery
+        //     $: 'jquery'
+        // })
+        new CleanWebpackPlugin(),
+        new copyWpackPlugin([
+            {from:'doc',to:'./'}
+        ]),
+        new webpack.BannerPlugin('made by jiwq')
     ]
 }
