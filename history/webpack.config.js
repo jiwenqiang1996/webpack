@@ -1,34 +1,18 @@
 let path = require('path');
 let HtmlWebpackPlugin = require('html-webpack-plugin');
 const  webpack  = require('webpack');
+const { locale } = require('moment');
+let Happypack = require('happypack');//多线程
+// let MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// let OptimizeCssAssetsWebpackPlugin  = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {    
     performance: { // 解决limit
         hints: false
-    },   
-    // 抽取公共代码
-    optimization:{
-        splitChunks:{//分割代码块
-            cacheGroups:{//缓存组
-                common:{ //公共模块
-                    chunks:'initial',
-                    minSize:0,
-                    minChunks:2
-                },
-                vendor:{
-                    priority:1,
-                    test:/node_modules/,
-                    chunks:'initial',
-                    minSize:0,
-                    minChunks:2
-                }
-            }
-        }
-    },   
+    },      
     // 多入口
     entry: {
-        index:'./src/index.js',
-        other:'./src/other.js'
+        index:'./src/index.js'
     }, 
     output: {
         filename: '[name].js', // 打包后的文件名
@@ -49,22 +33,7 @@ module.exports = {
             },       
             {
                 test: /\.js$/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: [
-                                '@babel/preset-env',
-                                '@babel/preset-react'
-                            ],
-                            plugins: [
-                                ["@babel/plugin-proposal-decorators",{"legacy": true}],
-                                ['@babel/plugin-proposal-class-properties',{"loose": true}],
-                                "@babel/plugin-transform-runtime"
-                            ]
-                        }
-                    }
-                ],               
+                use: 'Happypack/loader?id=js',                
                 include: path.resolve(__dirname,'src'),
                 exclude: /node_modules/
             },            
@@ -94,10 +63,29 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './public/index.html',
             filename: 'index.html'     
-        }), 
+        }),      
+        new Happypack({
+            id: 'js',
+            use: [
+                {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            '@babel/preset-env',
+                            '@babel/preset-react'
+                        ],
+                        plugins: [
+                            ["@babel/plugin-proposal-decorators",{"legacy": true}],
+                            ['@babel/plugin-proposal-class-properties',{"loose": true}],
+                            "@babel/plugin-transform-runtime"
+                        ]
+                    }
+                }
+            ],
+        }),
         new webpack.IgnorePlugin(/\.\/locale/,/moment/),
-        // new webpack.DllReferencePlugin({
-        //     manifest: path.resolve(__dirname,'dist','manifest.json')
-        // })
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname,'dist','manifest.json')
+        })
     ]
 }
